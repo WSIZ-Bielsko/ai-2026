@@ -60,6 +60,12 @@ AI_MODELS: dict[str, AI_Model] = {
         model_name="grok-3-mini-latest",
         key_name="XAI_KEY"
     ),
+    "grok-4.2": AI_Model(
+        name="grok-4.2",
+        base_url="https://api.x.ai/v1",
+        model_name="grok-4.20-0309-non-reasoning",
+        key_name="XAI_KEY"
+    ),
     "sonar": AI_Model(
         name="sonar",
         base_url="https://api.perplexity.ai",
@@ -92,7 +98,7 @@ AI_MODELS: dict[str, AI_Model] = {
         base_url="https://api.openai.com/v1/",
         # model_name="gpt-4o-mini",
         # model_name="gpt-4o",  #
-        model_name="gpt-5.4-2026-03-05",  # beware, $$$; check 4.1 first
+        model_name="gpt-4o",  # beware, $$$; check 4.1 first
         key_name="GPT_KEY"
     ),
     "gpt-simple": AI_Model(
