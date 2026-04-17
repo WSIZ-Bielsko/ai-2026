@@ -3,7 +3,7 @@ from random import shuffle
 
 from loguru import logger
 
-from ai_2026.common import call_ai_model, prompt_for_json
+from ai_2026.common import call_ai_model, prompt_for_json, AI_MODELS, ts
 from ai_2026.sentence_evaluator.model import read_jsonl
 
 
@@ -12,6 +12,8 @@ def evaluate_sentences(sentencs: list[str], answers: list[bool], model: str = 'g
 
     prompt = prompt + '\n\n' + '\n'.join(sentencs)
     logger.info(prompt)
+    logger.info(f'sentences: {len(sentencs)}')
+    st = ts()
 
     n_prompts = 1
     prompt = prompt_for_json(prompt, required_key='answer')
@@ -25,7 +27,7 @@ def evaluate_sentences(sentencs: list[str], answers: list[bool], model: str = 'g
     for _ in range(n_prompts):
         try:
             res, usage = call_ai_model(model, prompt, 'answer')
-            logger.info(f'answer: `{res}`')
+            logger.info(f'answer ({len(res)}) {type(res)} {type(res[0])}: `{res}`')
 
             # g = '{"answers": ' + res.lower() + '}'
             # w = json.loads(g)
@@ -37,13 +39,13 @@ def evaluate_sentences(sentencs: list[str], answers: list[bool], model: str = 'g
                     n_proper_negatives += 1
         except Exception as e:
             logger.error(e)
-
-        logger.info(f'model: {model}; positives: {n_proper_positives}/{n_positives}, negatives: {n_proper_negatives}/{n_negatives}')
+        en = ts()
+        logger.info(f'model: {AI_MODELS[model].model_name}; positives: {n_proper_positives}/{n_positives}, negatives: {n_proper_negatives}/{n_negatives}; duration: {en-st:.1f}s')
 
 
 
 def create_challenge(files: list[str], n_positive: int, n_negative: int) -> tuple[list[str], list[bool]]:
-    xx = read_jsonl('assets/causative.jsonl')
+    xx = read_jsonl(files[0])
 
     answers = [True] * n_positive + [False] * n_negative
     shuffle(answers)
@@ -58,7 +60,6 @@ def create_challenge(files: list[str], n_positive: int, n_negative: int) -> tupl
             break
 
     return sentences, answers
-
 if __name__ == '__main__':
-    sentences, answers = create_challenge(files=['assets/causative.jsonl'], n_positive=50, n_negative=50)
-    evaluate_sentences(sentences, answers, model='gpt')
+    sentences, answers = create_challenge(files=['assets/causative.jsonl'], n_positive=10, n_negative=10)
+    evaluate_sentences(sentences, answers, model='claude-4.6')

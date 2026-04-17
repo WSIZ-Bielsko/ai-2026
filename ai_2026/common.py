@@ -1,6 +1,7 @@
 import json
 import os
 import re
+from datetime import datetime
 
 from dotenv import load_dotenv
 from loguru import logger
@@ -28,6 +29,8 @@ class CallCost(BaseModel):
         u: CompletionUsage = response.usage
         return CallCost(prompt_tokens=u.prompt_tokens, completion_tokens=u.completion_tokens)
 
+def ts() -> float:
+    return datetime.now().timestamp()
 
 AI_MODELS: dict[str, AI_Model] = {
     "gemini": AI_Model(
@@ -54,10 +57,10 @@ AI_MODELS: dict[str, AI_Model] = {
         model_name="grok-3-fast-latest",
         key_name="XAI_KEY"
     ),
-    "grok-simple": AI_Model(
-        name="grok-simple",
+    "grok-4.1": AI_Model(
+        name="grok-4.1",
         base_url="https://api.x.ai/v1",
-        model_name="grok-3-mini-latest",
+        model_name="grok-4-1-fast-non-reasoning",
         key_name="XAI_KEY"
     ),
     "grok-4.2": AI_Model(
@@ -72,12 +75,10 @@ AI_MODELS: dict[str, AI_Model] = {
         model_name="sonar",
         key_name="PPLX_KEY"
     ),
-    "claude": AI_Model(
+    "claude-4.6": AI_Model(
         name="claude",
         base_url="https://api.anthropic.com/v1",
-        # model_name="claude-3-7-sonnet-20250219",
-        # model_name="claude-sonnet-4-20250514",
-        model_name="claude-sonnet-4-5-20250929",
+        model_name="claude-sonnet-4-6",
         key_name="ANTHROPIC_KEY"
     ),
     "claude-opus": AI_Model(
@@ -96,13 +97,17 @@ AI_MODELS: dict[str, AI_Model] = {
     "gpt": AI_Model(
         name="gpt",
         base_url="https://api.openai.com/v1/",
-        # model_name="gpt-4o-mini",
-        # model_name="gpt-4o",  #
         model_name="gpt-4o",  # beware, $$$; check 4.1 first
         key_name="GPT_KEY"
     ),
     "gpt-simple": AI_Model(
         name="gpt-simple",
+        base_url="https://api.openai.com/v1/",
+        model_name="gpt-4.1-2025-04-14",
+        key_name="GPT_KEY"
+    ),
+    "gpt-4.1": AI_Model(
+        name="gpt-4.1",
         base_url="https://api.openai.com/v1/",
         model_name="gpt-4.1-2025-04-14",
         key_name="GPT_KEY"
